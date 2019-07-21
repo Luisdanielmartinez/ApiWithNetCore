@@ -9,6 +9,7 @@ namespace ApiWithNetCore.Controllers
     using ApiWithNetCore.Models;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
 
     [Produces("application/json")]
     [Route("api/Country")]
@@ -51,5 +52,35 @@ namespace ApiWithNetCore.Controllers
             }
             return BadRequest(ModelState);
         }
+        //metodo para modificar county
+
+        [HttpPut("{Id}")]
+
+        public ActionResult put([FromBody] Country country, int Id)
+        {
+            if (country.Id!=Id)
+            {
+                return BadRequest();
+            }
+            dbContext.Entry(country).State = EntityState.Modified;
+            dbContext.SaveChanges();
+            return Ok();
+        }
+        //metodo de remove 
+
+        [HttpDelete ("{Id}")]
+
+        public ActionResult delete(int Id)
+        {
+            var country = dbContext.Countries.FirstOrDefault(x=>x.Id==Id);
+            if (country==null)
+            {
+                return NotFound();
+            }
+            dbContext.Countries.Remove(country);
+            dbContext.SaveChanges();
+            return Ok(country);
+        }
+
     }
 }
