@@ -12,7 +12,7 @@ namespace ApiWithNetCore.Models
     {
         //aqui estamos creando la tabla 
        public  DbSet<Country> Countries { get; set; }
-
+        public DbSet<City> Cities { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext>options):base(options)
         {
 

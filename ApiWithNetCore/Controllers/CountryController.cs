@@ -26,7 +26,7 @@ namespace ApiWithNetCore.Controllers
         [HttpGet]
         public IEnumerable<Country> Get()
         {
-            return dbContext.Countries.ToList();
+            return dbContext.Countries.Include(x=>x.Cities).ToList();
         }
 
         //metodo get con id

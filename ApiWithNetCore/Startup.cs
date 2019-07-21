@@ -9,6 +9,7 @@ namespace ApiWithNetCore
     using ApiWithNetCore.Models;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +30,12 @@ namespace ApiWithNetCore
             //aqui haremos la inyecccion de despendecia para utilizar el servicio de entity framework con la dbContext
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseInMemoryDatabase("ArticulosDb"));
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(ConfigureJson);
+        }
+
+        private void ConfigureJson(MvcJsonOptions obj)
+        {
+            obj.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,9 +52,18 @@ namespace ApiWithNetCore
             if (!context.Countries.Any())
             {
                 context.Countries.AddRange(new List<Country>() {
-                    new Country(){ Name="Republica Dominicana"},
-                    new Country(){Name="Estado Unidos"},
-                    new Country (){Name="España" }
+                    new Country(){ Name="Republica Dominicana", Cities=new List<City>(){
+                    new City(){name="Santo domingo" }, 
+                    new City (){name ="Bani"}
+                    } },
+                    new Country(){Name="Estado Unidos", Cities =new List<City>(){
+                        new City(){name="Boston"},
+                        new City(){name="New York"}
+                    } },
+                    new Country (){Name="España" , Cities=new List<City>(){
+                        new City(){ name="Barcelona"},
+                        new City(){ name="Madrid"}
+                    } }
 
                 });
                 context.SaveChanges();
