@@ -1,0 +1,55 @@
+﻿
+
+namespace ApiWithNetCore.Controllers
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using ApiWithNetCore.Models;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+
+    [Produces("application/json")]
+    [Route("api/Country")]
+    public class CountryController : Controller
+    {
+        //aqui estamos usando inyecciones de dependencia para traer el la db
+        private readonly ApplicationDbContext dbContext;
+        public CountryController(ApplicationDbContext dbContext)
+        {
+            this.dbContext = dbContext;
+
+        }
+        //metodo get api/country
+        [HttpGet]
+        public IEnumerable<Country> Get()
+        {
+            return dbContext.Countries.ToList();
+        }
+
+        //metodo get con id
+        [HttpGet("{Id}", Name ="Creado")]
+
+        public ActionResult GetById(int Id) {
+            var Country = dbContext.Countries.FirstOrDefault(x => x.Id == Id);
+
+            if (Country==null) {
+                return NotFound();
+            }
+            return Ok(Country);
+        }
+        //metodo para insertar un pais
+        [HttpPost]
+        public ActionResult Post([FromBody] Country country)
+        {
+            if (ModelState.IsValid) {
+                dbContext.Countries.Add(country);
+                dbContext.SaveChanges();
+
+                return new CreatedAtRouteResult("Creado", new { id = country.Id });
+            }
+            return BadRequest(ModelState);
+        }
+    }
+}
