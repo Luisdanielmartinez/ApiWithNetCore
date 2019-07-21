@@ -26,14 +26,14 @@ namespace ApiWithNetCore.Controllers
         [HttpGet]
         public IEnumerable<Country> Get()
         {
-            return dbContext.Countries.Include(x=>x.Cities).ToList();
+            return dbContext.Countries.ToList();
         }
 
         //metodo get con id
         [HttpGet("{Id}", Name ="Creado")]
 
         public ActionResult GetById(int Id) {
-            var Country = dbContext.Countries.FirstOrDefault(x => x.Id == Id);
+            var Country = dbContext.Countries.Include(x => x.Cities).FirstOrDefault(x => x.Id == Id);
 
             if (Country==null) {
                 return NotFound();

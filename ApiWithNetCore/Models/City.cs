@@ -1,6 +1,7 @@
 ﻿
 namespace ApiWithNetCore.Models
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -14,7 +15,8 @@ namespace ApiWithNetCore.Models
         [StringLength(30)]
         public string name { get; set; }
         [ForeignKey("Country")]
-        public int PaisId { get; set; }
+        public int CountryId { get; set; }
+        [JsonIgnore]
         public Country country { get; set; }
     }
 }

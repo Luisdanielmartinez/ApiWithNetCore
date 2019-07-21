@@ -14,5 +14,9 @@ namespace ApiWithNetCore.Models
         public string Name { get; set; }
         //aqui estamos enlazando las proviencias con sus repetivas ciudades
         public List<City> Cities { get; set; }
+        public Country()
+        {
+            Cities = new List<City>();
+        }
     }
 }
