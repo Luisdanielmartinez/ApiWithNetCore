@@ -9,6 +9,7 @@ namespace ApiWithNetCore
     using ApiWithNetCore.Models;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -29,7 +30,11 @@ namespace ApiWithNetCore
         {
             //aqui haremos la inyecccion de despendecia para utilizar el servicio de entity framework con la dbContext
             services.AddDbContext<ApplicationDbContext>(
-                options => options.UseInMemoryDatabase("ArticulosDb"));
+                options => options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
+            //aqui vamos agregar el user que nosda el entity por default
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
             services.AddMvc().AddJsonOptions(ConfigureJson);
         }
 
@@ -53,7 +58,7 @@ namespace ApiWithNetCore
             {
                 context.Countries.AddRange(new List<Country>() {
                     new Country(){ Name="Republica Dominicana", Cities=new List<City>(){
-                    new City(){name="Santo domingo" }, 
+                    new City(){name="Santo domingo" },
                     new City (){name ="Bani"}
                     } },
                     new Country(){Name="Estado Unidos", Cities =new List<City>(){
