@@ -7,12 +7,16 @@ namespace ApiWithNetCore.Controllers
     using System.Linq;
     using System.Threading.Tasks;
     using ApiWithNetCore.Models;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
     [Produces("application/json")]
     [Route("api/Country")]
+    //se le agrega la autenticacion
+    [Authorize (AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
     public class CountryController : Controller
     {
         //aqui estamos usando inyecciones de dependencia para traer el la db

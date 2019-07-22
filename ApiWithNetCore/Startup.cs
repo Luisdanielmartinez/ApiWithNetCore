@@ -5,8 +5,10 @@ namespace ApiWithNetCore
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using ApiWithNetCore.Models;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
@@ -16,6 +18,8 @@ namespace ApiWithNetCore
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
+    using Microsoft.IdentityModel.Tokens;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -36,6 +40,20 @@ namespace ApiWithNetCore
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             services.AddMvc().AddJsonOptions(ConfigureJson);
+            //agregamos la configuracion de la autenticacion
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options=>options.TokenValidationParameters=new TokenValidationParameters
+                {
+                    ValidateIssuer=true,
+                    ValidateAudience=true,
+                    ValidateLifetime=true,
+                    ValidateIssuerSigningKey=true,
+                    ValidIssuer="yourdomain.com",//este es el emisor validad
+                    ValidAudience="yourdomain.com",//la audiencia validad
+                    IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Llave_super_secreta"])),
+                    ClockSkew=TimeSpan.Zero
+                }
+                );
         }
 
         private void ConfigureJson(MvcJsonOptions obj)
@@ -50,8 +68,9 @@ namespace ApiWithNetCore
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseAuthentication();
             app.UseMvc();
+
             //aqui vamos a crear un metodo para que si no tienes datos que agregue datos de pruevas
 
             if (!context.Countries.Any())
